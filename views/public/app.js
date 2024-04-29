@@ -1,6 +1,6 @@
 let isSubscribed = false;
 let swRegistration = null;
-let applicationKey = "BNinQP00uhbpNYht4PG990s2M-XinzpvBXIBkhLoADpYb4cQTWgfyXgcVrWHYNfahnmzyUYDQxbPq9H_mc0M9VY";
+let applicationKey = "";
 
 
 
