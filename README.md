@@ -12,9 +12,11 @@ This project combines several backend concerns in one codebase:
 
 It is best understood as a practical backend prototype rather than a polished production system.
 
-## What the project does
+## Project overview
 
-The backend provides a foundation for handling:
+`backend_two` appears to function as the **backend counterpart** of the `dupia` frontend project.
+
+The codebase provides the backend foundation for handling:
 
 - user signup and login
 - email verification
@@ -23,7 +25,27 @@ The backend provides a foundation for handling:
 - push notification subscriptions
 - real-time event delivery through Socket.IO
 
-The code suggests an application that mixes social features, user networks, messaging, and notification-driven interactions.
+The overall structure suggests a social/community application that mixes user relationships, messaging, content, and collaboration features.
+
+## Relationship to `dupia`
+
+This repository is intended to serve the `dupia` frontend:
+
+- this backend runs Socket.IO on port `4444`
+- it listens for:
+  - `getDoc`
+  - `getAllDocs`
+  - `addDoc`
+  - `editDoc`
+
+The `dupia` frontend connects to `http://localhost:4444` and emits those same exact events through its Angular document service.
+
+That makes the pairing:
+
+**`dupia` = frontend client**  
+**`backend_two` = backend / API / real-time server**
+
+In other words, `backend_two` is not just a random Express experiment — it looks like the service layer behind a broader frontend application.
 
 ## Main technologies
 
@@ -40,11 +62,11 @@ The code suggests an application that mixes social features, user networks, mess
 
 ### Server entry
 - `server.js`  
-  Main backend entry point. Sets up Express, CORS, JSON parsing, Socket.IO, route registration, database sync, and push configuration.
+  Main backend entry point. Sets up Express, CORS, JSON parsing, route registration, database sync, and Socket.IO listeners.
 
 ### Models
 - `app/models/index.js`  
-  Initializes Sequelize and registers the application's models.
+  Initializes Sequelize and registers the application models.
 - `app/models/user.model.js`  
   Defines the user schema.
 - Additional models include:
@@ -58,7 +80,8 @@ The code suggests an application that mixes social features, user networks, mess
 ### Controllers
 - `app/controllers/user.controller.js`  
   Handles user creation, login, verification, referral-style ID generation, account lookup, and related user logic.
-- Push controllers are used for browser push subscription handling.
+- Push-related controllers handle browser push subscription flows.
+- Document and other domain controllers support the real-time and REST layers.
 
 ### Routes
 The backend registers multiple route groups, including:
@@ -69,6 +92,16 @@ The backend registers multiple route groups, including:
 - chat routes
 - push routes
 - subscription routes
+
+### Real-time document layer
+- `app/routes/document.routes.js`  
+  Implements Socket.IO document events used by the frontend:
+  - `getDoc`
+  - `getAllDocs`
+  - `addDoc`
+  - `editDoc`
+
+This is the clearest integration point between `backend_two` and `dupia`.
 
 ### Frontend-facing push demo
 - `views/public/app.js`  
@@ -81,7 +114,7 @@ The backend registers multiple route groups, including:
 ## Features visible in the code
 
 ### 1. REST API backend
-The server exposes multiple application routes and basic API structure through Express.
+The server exposes multiple application routes and API structures through Express.
 
 ### 2. Database-backed user system
 User data is stored with Sequelize/MySQL, including fields such as:
@@ -112,10 +145,10 @@ The codebase includes:
 - web-push-related route structure
 
 ### 5. Real-time communication
-Socket.IO is initialized alongside the HTTP server, suggesting support for:
+Socket.IO is initialized separately from the HTTP API server and used for:
 - live updates
-- messaging
-- collaborative or event-driven features
+- collaborative document handling
+- messaging/event-driven features
 
 ### 6. Multi-feature backend design
 This is not just a login API or CRUD sample. The codebase tries to support a wider application scope, including:
@@ -125,7 +158,7 @@ This is not just a login API or CRUD sample. The codebase tries to support a wid
 - documents
 - notifications
 
-## What is interesting here
+## Why this repo is meaningful
 
 This repo is meaningful because it shows a developer trying to build a backend that handles several real product concerns at once rather than only a small tutorial API.
 
@@ -137,6 +170,7 @@ The interesting part is not code polish, but scope:
 - real-time layer
 - multiple data models
 - application-oriented routing
+- clear coupling to a separate frontend project
 
 That makes it more substantial than a basic Express starter project.
 
@@ -148,11 +182,23 @@ That makes it more substantial than a basic Express starter project.
 - Security, configuration management, and production readiness would need significant improvement before real deployment.
 - Some naming and architecture decisions reflect active prototyping more than finished backend design.
 
+## Local development
+
+This project appears intended to run alongside the `dupia` frontend.
+
+Typical setup idea:
+
+1. configure the database
+2. start the Express backend
+3. make sure the API server and Socket.IO server are running
+4. run `dupia` separately as the frontend client
+5. keep Socket.IO available on port `4444` for real-time features
+
 ## Best way to understand this repo
 
 Think of this as:
 
-**an early full-featured backend prototype for a social/community web application**, built with Node.js, Express, Sequelize, Socket.IO, and push notification support.
+**an early full-featured backend prototype for a social/community web application, built to support the `dupia` frontend with APIs, persistence, and real-time collaboration**
 
 It is stronger as evidence of practical backend experimentation than as a polished production portfolio piece.
 
@@ -165,6 +211,7 @@ It is stronger as evidence of practical backend experimentation than as a polish
 - improve folder organization and naming consistency
 - add authentication / authorization notes explicitly
 - include example API requests
+- document the frontend integration contract with `dupia`
 
 ## Summary
 
@@ -176,3 +223,5 @@ It is stronger as evidence of practical backend experimentation than as a polish
 - push-notification subscription flow
 - user/account verification logic
 - multi-model application design
+
+It is best understood as the backend side of a broader social/community application prototype, paired with the `dupia` frontend.
